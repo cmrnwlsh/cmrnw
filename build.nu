@@ -14,7 +14,7 @@ export def 'build client' [--dev] {
   job spawn {
     let _ = (ls ($p)/client | where type == dir).name | par-each { |$c|
       let c = $c | path basename
-      let flags = if $dev { ["--dev"] } else { [] }
+      let flags = if $dev { [--dev] } else { [] }
       wasm-pack build ...$flags --out-dir ($p)/static/($c) ($p)/client/($c)
       $'(ansi c)($c)(ansi rst): build complete' | job send 0
     }
@@ -23,7 +23,7 @@ export def 'build client' [--dev] {
 
 export def 'build server' [--dev] {
   job spawn {
-    let flags = if $dev { [] } else { ["--release"] }
+    let flags = if $dev { [] } else { [--release] }
     cargo build --manifest-path ($p)/Cargo.toml --package server ...$flags 
     $'(ansi c)server(ansi rst): build complete' | job send 0
   }
@@ -38,7 +38,8 @@ export def 'build clean' [] {
   print $'     (ansi gb)Removed(ansi rst) ($len) static files'
 }
 
-export def --wrapped 'build run' [...args] {
-  build
-  cargo run ...$args --package server
+export def 'build run' [--dev] {
+  let flags = if $dev { [] } else { [--release] }
+  if $dev { main --dev } else { main }
+  cargo run --manifest-path ($p)/Cargo.toml --package server ...$flags
 }
