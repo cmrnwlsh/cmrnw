@@ -12,7 +12,11 @@ pub fn start() -> Result<(), JsValue> {
     let val = document.create_element("p")?;
     val.set_inner_html("Hello from WASM! This is example-wasm.");
 
-    body.append_child(&val)?;
+    let cont = body.first_child().expect("main element should exist");
+    for _ in 0..2 {
+        cont.append_child(&document.create_element("br")?.dyn_into()?)?;
+    }
+    cont.append_child(&val)?;
 
     Ok(())
 }
