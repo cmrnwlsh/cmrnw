@@ -26,18 +26,25 @@ fn main() -> Markup {
             h6 { "0x68656C6C6F20776F726C64" }
         }}
         main style="display:flex; flex-grow:1" {
-            aside style="width: 10%" {
-                nav { ul {
-                li { a { "nav_a" } }
-                li { a { "nav_b" } }
-                li { a { "nav_c" } }
-            }}}
+            (side_nav())
             #content style="flex-direction:column" {
                 button hx-post="/clicked" hx-swap="outerHTML" { "Click Me" }
             }
         }
         footer style="height:10%" { a href="https://github.com/cmrnwlsh/cmrnw" { "source" } }
     }}
+}
+
+fn side_nav() -> Markup {
+    let link = |name| html! { li style="border-left: 4px solid #333;" { a { (name) } } };
+    html! { aside style="margin-right: 40px" {
+        nav { ul {
+        details { summary { "code" } ul style="margin-left: 2px" {
+            (link("nav_aaaaaa"))
+            (link("nav_b"))
+            (link("nav_c"))
+        }}
+    }}}}
 }
 
 pub async fn clicked() -> Markup {
