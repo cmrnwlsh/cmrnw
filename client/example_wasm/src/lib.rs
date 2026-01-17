@@ -10,9 +10,11 @@ pub fn start() -> Result<(), JsValue> {
     let body = document.body().expect("document should have a body");
 
     let val = document.create_element("p")?;
-    val.set_inner_html("Hello from WASM! This is example-wasm.");
+    val.set_inner_html("wasm");
 
-    let cont = body.first_child().expect("main element should exist");
+    let cont = body
+        .query_selector("#content")?
+        .expect("container should exist");
     for _ in 0..2 {
         cont.append_child(&document.create_element("br")?.dyn_into()?)?;
     }
@@ -23,5 +25,5 @@ pub fn start() -> Result<(), JsValue> {
 
 #[wasm_bindgen]
 pub fn greet(name: &str) -> String {
-    format!("Hello, {}! (from example-wasm)", name)
+    format!("Hello, {}! (from example_wasm)", name)
 }

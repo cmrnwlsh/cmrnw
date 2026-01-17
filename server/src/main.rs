@@ -5,7 +5,7 @@ use axum::{
     routing::{get, post},
 };
 use tokio::net::TcpListener;
-use tower_http::{services::ServeDir, trace::TraceLayer, compression::CompressionLayer};
+use tower_http::{compression::CompressionLayer, services::ServeDir, trace::TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
@@ -29,12 +29,12 @@ async fn main() -> Result<()> {
         .init();
 
     let app = Router::new()
-        .route("/", get(templates::index))
         .route("/health", get(|| async { "OK" }))
+        .route("/", get(templates::index))
         .route("/clicked", post(templates::clicked))
         .nest_service(
             "/static",
-            ServeDir::new("../static").append_index_html_on_directories(false),
+            ServeDir::new("static").append_index_html_on_directories(false),
         )
         .layer(CompressionLayer::new())
         .layer(TraceLayer::new_for_http());
